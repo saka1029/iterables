@@ -28,6 +28,8 @@ public class TestIterables {
 		assertEquals(List.of(12, 23, 34), arrayList(map((i, n) -> ++i * 10 + n, ints(2, 3, 4))));
 		assertEquals(List.of("0:zero", "1:one"),
             arrayList(map((i, n) -> i + ":" + n, List.of("zero", "one"))));
+		assertEquals(List.of("0:zero", "1:one"),
+            arrayList(map((l, r) -> l + ":" + r, range(0, 5), List.of("zero", "one"))));
 	}
 
 	@Test

@@ -18,6 +18,7 @@ public class Iterables {
 	
 	public static Iterable<Integer> range(int start, int end) {
 		return () -> new Iterator<Integer>() {
+
 			int i = start;
 
 			@Override
@@ -42,6 +43,7 @@ public class Iterables {
 
 	public static <T, U> Iterable<U> map(BiFunction<Integer, T, U> mapper, Iterable<T> source) {
 		return () -> new Iterator<U>() {
+
 			final Iterator<T> iterator = source.iterator();
 			int i = 0;
 
@@ -60,6 +62,7 @@ public class Iterables {
 
 	public static <T, U> Iterable<U> map(Function<T, U> mapper, Iterable<T> source) {
 		return () -> new Iterator<U>() {
+
 			final Iterator<T> iterator = source.iterator();
 
 			@Override
@@ -75,8 +78,28 @@ public class Iterables {
 		};
 	}
 
+	public static <L, R, U> Iterable<U> map(BiFunction<L, R, U> mapper, Iterable<L> leftSource, Iterable<R> rightSource) {
+		return () -> new Iterator<U>() {
+
+			final Iterator<L> left = leftSource.iterator();
+			final Iterator<R> right = rightSource.iterator();
+
+			@Override
+			public boolean hasNext() {
+				return left.hasNext() && right.hasNext();
+			}
+
+			@Override
+			public U next() {
+				return mapper.apply(left.next(), right.next());
+			}
+			
+		};
+	}
+
 	public static <T> Iterable<T> filter(BiPredicate<Integer, T> selector, Iterable<T> source) {
 		return () -> new Iterator<T>() {
+
 			final Iterator<T> iterator = source.iterator();
 			int index = 0;
 			boolean hasNext = advance();
@@ -106,6 +129,7 @@ public class Iterables {
 
 	public static <T> Iterable<T> filter(Predicate<T> selector, Iterable<T> source) {
 		return () -> new Iterator<T>() {
+			
 			final Iterator<T> iterator = source.iterator();
 			boolean hasNext = advance();
 			T next;
