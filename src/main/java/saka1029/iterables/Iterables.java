@@ -78,13 +78,13 @@ public class Iterables {
 	public static <T> Iterable<T> filter(BiPredicate<Integer, T> selector, Iterable<T> source) {
 		return () -> new Iterator<T>() {
 			final Iterator<T> iterator = source.iterator();
-			int index = -1;
+			int index = 0;
 			boolean hasNext = advance();
 			T next;
 			
 			boolean advance() {
 				while (iterator.hasNext())
-					if (selector.test(++index, next = iterator.next()))
+					if (selector.test(index++, next = iterator.next()))
 						return true;
 				return false;
 			}
