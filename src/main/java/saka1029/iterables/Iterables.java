@@ -13,21 +13,46 @@ import java.util.function.Supplier;
 
 public class Iterables {
 	
-	public static Iterable<Integer> range(int start, int end) {
-		return () -> new Iterator<Integer>() {
-			int i = start;
+	public static <T, C> Iterator<T> iterator(C context, Predicate<C> hasNext, Function<C, T> next) {
+		return new Iterator<T>() {
 
 			@Override
 			public boolean hasNext() {
-				return i < end;
+				return hasNext.test(context);
 			}
 
 			@Override
-			public Integer next() {
-				return i++;
+			public T next() {
+				return next.apply(context);
 			}
 			
 		};
+	}
+
+	public static <T, C> Iterable<T> iterable(C context, Predicate<C> hasNext, Function<C, T> next) {
+		return () -> iterator(context, hasNext, next);
+	}
+
+	public static Iterable<Integer> range(int start, int end) {
+		return iterable(new Object() { int i = start; }, c -> c.i < end, c -> c.i++);
+//		return () -> new Iterator<Integer>() {
+//			int i = start;
+//
+//			@Override
+//			public boolean hasNext() {
+//				return i < end;
+//			}
+//
+//			@Override
+//			public Integer next() {
+//				return i++;
+//			}
+//			
+//		};
+	}
+
+	public static Iterable<Integer> range(int start, int end, int step) {
+		return iterable(new Object() { int i = start; }, c -> c.i < end, c -> c.i += step);
 	}
 
 	public static List<Integer> ints(int... elements) {
@@ -38,20 +63,22 @@ public class Iterables {
 	}
 
 	public static <T, U> Iterable<U> map(Function<T, U> mapper, Iterable<T> source) {
-		return () -> new Iterator<U>() {
-			final Iterator<T> iterator = source.iterator();
-
-			@Override
-			public boolean hasNext() {
-				return iterator.hasNext();
-			}
-
-			@Override
-			public U next() {
-				return mapper.apply(iterator.next());
-			}
-			
-		};
+		return iterable(source.iterator(), c -> c.hasNext(), c -> mapper.apply(c.next()));
+//		return () -> new Iterator<U>() {
+//
+//			final Iterator<T> iterator = source.iterator();
+//
+//			@Override
+//			public boolean hasNext() {
+//				return iterator.hasNext();
+//			}
+//
+//			@Override
+//			public U next() {
+//				return mapper.apply(iterator.next());
+//			}
+//			
+//		};
 	}
 
 	public static <T> Iterable<T> filter(Predicate<T> selector, Iterable<T> source) {
