@@ -37,28 +37,44 @@ public class Iterables {
 	}
 
 	public static Iterable<Integer> range(int start, int end) {
-		return iterable(new Object() { int i = start; }, c -> c.i < end, c -> c.i++);
-//		return () -> new Iterator<Integer>() {
-//			int i = start;
-//
-//			@Override
-//			public boolean hasNext() {
-//				return i < end;
-//			}
-//
-//			@Override
-//			public Integer next() {
-//				return i++;
-//			}
-//			
-//		};
+		return () -> new Iterator<Integer>() {
+
+			int i = start;
+
+			@Override
+			public boolean hasNext() {
+				return i < end;
+			}
+
+			@Override
+			public Integer next() {
+				return i++;
+			}
+			
+		};
 	}
 
 	public static Iterable<Integer> range(int start, int end, int step) {
-		return iterable(new Object() { int i = start; }, c -> c.i < end, c -> c.i += step);
+		return () -> new Iterator<Integer>() {
+
+			int i = start;
+
+			@Override
+			public boolean hasNext() {
+				return step > 0 ? i < end : i > end;
+			}
+
+			@Override
+			public Integer next() {
+				int result = i;
+				i += step;
+				return result;
+			}
+			
+		};
 	}
 
-	public static List<Integer> ints(int... elements) {
+	public static List<Integer> list(int... elements) {
 		List<Integer> list = new ArrayList<>();
 		for (int element : elements)
 			list.add(element);
