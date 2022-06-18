@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static saka1029.iterables.Iterables.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
