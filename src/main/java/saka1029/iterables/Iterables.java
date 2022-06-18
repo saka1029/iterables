@@ -13,6 +13,7 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class Iterables {
 	
@@ -34,6 +35,15 @@ public class Iterables {
 
 	public static <T, C> Iterable<T> iterable(C context, Predicate<C> hasNext, Function<C, T> next) {
 		return () -> iterator(context, hasNext, next);
+	}
+	
+	/**
+	 * StreamをIterableに変換します。
+	 * ただし、返されるIterableは1回しかiterator()を呼び出すことができません。 
+	 * 2回呼び出すとIllegalStateExceptionがスローされます。
+	 */
+	public static <T> Iterable<T> iterable(Stream<T> stream) {
+		return () -> stream.iterator();
 	}
 
 	public static Iterable<Integer> range(int start, int end) {

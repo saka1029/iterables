@@ -1,9 +1,12 @@
 package saka1029.iterables;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 import static saka1029.iterables.Iterables.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +17,21 @@ import org.junit.Test;
 public class TestIterables {
 
 	@Test
+	public void testIterable() {
+		Iterable<Integer> iterable = iterable(Stream.of(1, 2));
+		Iterator<Integer> iterator = iterable.iterator();
+		assertEquals(1, (int)iterator.next());
+		assertEquals(2, (int)iterator.next());
+		assertFalse(iterator.hasNext());
+		try {
+            Iterator<Integer> iterator2 = iterable.iterator();
+            fail();
+            assertEquals(1, (int)iterator2.next());
+		} catch (IllegalStateException e) {
+			assertEquals("stream has already been operated upon or closed", e.getMessage());
+		}
+	}
+	
 	public void testRangeIntInt() {
 		assertEquals(List.of(2, 3, 4), arrayList(range(2, 5)));
 		assertEquals(List.of(), arrayList(range(2, 2)));
