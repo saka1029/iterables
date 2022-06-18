@@ -101,22 +101,21 @@ public class Iterables {
 	}
 
 	public static <T, U> Iterable<U> map(Function<T, U> mapper, Iterable<T> source) {
-		return iterable(source.iterator(), c -> c.hasNext(), c -> mapper.apply(c.next()));
-//		return () -> new Iterator<U>() {
-//
-//			final Iterator<T> iterator = source.iterator();
-//
-//			@Override
-//			public boolean hasNext() {
-//				return iterator.hasNext();
-//			}
-//
-//			@Override
-//			public U next() {
-//				return mapper.apply(iterator.next());
-//			}
-//			
-//		};
+		return () -> new Iterator<U>() {
+
+			final Iterator<T> iterator = source.iterator();
+
+			@Override
+			public boolean hasNext() {
+				return iterator.hasNext();
+			}
+
+			@Override
+			public U next() {
+				return mapper.apply(iterator.next());
+			}
+			
+		};
 	}
 
 	public static <L, R, U> Iterable<U> map(BiFunction<L, R, U> mapper, Iterable<L> leftSource, Iterable<R> rightSource) {
