@@ -6,10 +6,13 @@ import static org.junit.Assert.fail;
 import static saka1029.iterables.Iterables.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -68,6 +71,13 @@ public class TestIterables {
 	}
 	
 	@Test
+	public void testCollection() {
+		Collection<Integer> c = collection(HashSet::new, list(1, 2, 2, 3));
+		assertEquals(HashSet.class, c.getClass());
+		assertEquals(Set.of(1, 2, 3), c);
+	}
+	
+	@Test
 	public void testArrayList() {
 		assertEquals(List.of(2, 3, 4), arrayList(list(2, 3, 4)));
 		assertEquals(ArrayList.class, arrayList(list(2, 3, 4)).getClass());
@@ -81,7 +91,7 @@ public class TestIterables {
 		assertEquals(LinkedList.class, linkedList(list(2, 3, 4)).getClass());
 		assertEquals(List.of(2, 3, 4), linkedList(List.of(2, 3, 4)));
 	}
-	
+
     record N(int i, String s) {}
 
 	@Test

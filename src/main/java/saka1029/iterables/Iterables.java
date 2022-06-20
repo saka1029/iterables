@@ -1,13 +1,17 @@
 package saka1029.iterables;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -148,14 +152,20 @@ public class Iterables {
 		};
 	}
 	
-	public static <T> Iterable<T> sort(Comparator<T> comparator, Iterable<T> source) {
+	public static <T> List<T> sort(Comparator<T> comparator, Iterable<T> source) {
 		List<T> list = arrayList(source);
 		list.sort(comparator);
 		return list;
 	}
 	
-	public static <T extends Comparable<T>> Iterable<T> sort(Iterable<T> source) {
+	public static <T extends Comparable<T>> List<T> sort(Iterable<T> source) {
 		return sort(Comparator.naturalOrder(), source);
+	}
+
+	public static <T> List<T> reverse(Iterable<T> source) {
+		List<T> list = arrayList(source);
+		Collections.reverse(list);
+		return list;
 	}
 
 	public static <T> Iterable<T> filter(BiPredicate<Integer, T> selector, Iterable<T> source) {
@@ -217,19 +227,31 @@ public class Iterables {
 		};
 	}
 	
-	public static <T> List<T> list(Supplier<List<T>> constructor, Iterable<T> source) {
-		List<T> result = constructor.get();
+	public static <T> Collection<T> collection(Supplier<Collection<T>> constructor, Iterable<T> source) {
+		Collection<T> result = constructor.get();
 		for (T element : source)
 			result.add(element);
 		return result;
 	}
 
 	public static <T> ArrayList<T> arrayList(Iterable<T> source) {
-		return (ArrayList<T>)list(ArrayList::new, source);
+		return (ArrayList<T>)collection(ArrayList::new, source);
 	}
 	
 	public static <T> LinkedList<T> linkedList(Iterable<T> source) {
-		return (LinkedList<T>)list(LinkedList::new, source);
+		return (LinkedList<T>)collection(LinkedList::new, source);
+	}
+		
+	public static <T> HashSet<T> hashSet(Iterable<T> source) {
+		return (HashSet<T>)collection(HashSet::new, source);
+	}
+	
+	public static <T extends Comparable<T>> TreeSet<T> treeSet(Iterable<T> source) {
+		return (TreeSet<T>)collection(TreeSet::new, source);
+	}
+	
+	public static <T> TreeSet<T> treeSet(Comparator<T> comparator, Iterable<T> source) {
+		return (TreeSet<T>)collection(() -> new TreeSet<>(comparator), source);
 	}
 	
 	public static <T> T[] array(IntFunction<T[]> constructor, Iterable<T> source) {
@@ -252,11 +274,11 @@ public class Iterables {
 	}
 	
 	public static <T, U extends Comparable<U>> Comparator<T> asc(Function<T, U> extractor) {
-		return (a, b) -> extractor.apply(a).compareTo(extractor.apply(b));
+		return Comparator.comparing(extractor);
 	}
 
 	public static <T, U extends Comparable<U>> Comparator<T> desc(Function<T, U> extractor) {
-		return (a, b) -> extractor.apply(b).compareTo(extractor.apply(a));
+		return Comparator.comparing(extractor).reversed();
 	}
 
 	public static <T> Comparator<T> reverse(Comparator<T> comparator) {
