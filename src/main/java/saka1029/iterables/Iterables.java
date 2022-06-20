@@ -285,6 +285,10 @@ public class Iterables {
 		return comparator.reversed();
 	}
 
+	public static <T extends Comparable<T>> Comparator<T> reverse() {
+		return Comparator.reverseOrder();
+	}
+
     @SafeVarargs
     public static <T> Comparator<T> and(Comparator<T> first, Comparator<T>... rest) {
         for (Comparator<T> c : rest)

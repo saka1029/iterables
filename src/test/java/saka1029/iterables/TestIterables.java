@@ -69,6 +69,19 @@ public class TestIterables {
 		assertEquals(List.of(0, 4), arrayList(filter((i, n) -> i == n, list(0, 9, 8, 7, 4))));
 		assertEquals(List.of(10, 30), arrayList(map(n -> 10 * n, filter(n -> n % 2 == 1, range(0, 5)))));
 	}
+
+	@Test
+	public void testSort() {
+		assertEquals(List.of(0, 1, 2, 3, 4), sort(list(2, 0, 1, 4, 3)));
+		assertEquals(List.of(4, 3, 2, 1, 0), sort(reverse(), list(2, 0, 1, 4, 3)));
+		assertEquals(List.of(0, 1, 2, 3, 4), sort((a, b) -> Integer.compare(a, b), list(2, 0, 1, 4, 3)));
+		assertEquals(List.of(4, 3, 2, 1, 0), sort((a, b) -> Integer.compare(b, a), list(2, 0, 1, 4, 3)));
+	}
+
+	@Test
+	public void testReverse() {
+		assertEquals(List.of(3, 4, 1, 0, 2), reverse(list(2, 0, 1, 4, 3)));
+	}
 	
 	@Test
 	public void testCollection() {
