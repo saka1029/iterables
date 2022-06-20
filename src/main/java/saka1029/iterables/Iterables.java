@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
@@ -69,6 +70,24 @@ public class Iterables {
 		};
 	}
 
+	public static Iterable<Integer> rangeClosed(int start, int end) {
+		return () -> new Iterator<Integer>() {
+
+			int i = start;
+
+			@Override
+			public boolean hasNext() {
+				return i <= end;
+			}
+
+			@Override
+			public Integer next() {
+				return i++;
+			}
+			
+		};
+	}
+
 	public static Iterable<Integer> range(int start, int end, int step) {
 		return () -> new Iterator<Integer>() {
 
@@ -94,6 +113,10 @@ public class Iterables {
 		for (int element : elements)
 			list.add(element);
 		return list;
+	}
+	
+	public static Iterable<Integer> iterable(String s) {
+		return () -> s.codePoints().iterator();
 	}
 
 	public static <T, U> Iterable<U> map(BiFunction<Integer, T, U> mapper, Iterable<T> source) {
@@ -227,6 +250,22 @@ public class Iterables {
 		};
 	}
 	
+	public static <T> T reduce(BinaryOperator<T> reducer, Iterable<T> source) {
+		T result = null;
+		boolean first = true;
+		for (T t : source) {
+			result = first ? t : reducer.apply(result, t);
+			first = false;
+		}
+		return result;
+	}
+
+	public static <T, U> U reduce(U unit, BiFunction<U, T, U> reducer, Iterable<T> source) {
+		for (T t : source)
+			unit = reducer.apply(unit, t);
+		return unit;
+	}
+	
 	public static <T> Collection<T> collection(Supplier<Collection<T>> constructor, Iterable<T> source) {
 		Collection<T> result = constructor.get();
 		for (T element : source)
@@ -256,6 +295,15 @@ public class Iterables {
 	
 	public static <T> T[] array(IntFunction<T[]> constructor, Iterable<T> source) {
 		return arrayList(source).toArray(constructor);
+	}
+	
+	public static int[] array(Iterable<Integer> source) {
+		ArrayList<Integer> list = arrayList(source);
+		int size = list.size();
+		int[] result = new int[size];
+		for (int i = 0; i < size; ++i)
+			result[i] = list.get(i);
+		return result;
 	}
 	
 	public static <T, K, V> Map<K, V> map(Supplier<Map<K, V>> constructor, Function<T, K> key, Function<T, V> value, Iterable<T> source) {

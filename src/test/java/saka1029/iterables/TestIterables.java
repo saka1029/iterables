@@ -49,8 +49,14 @@ public class TestIterables {
 	}
 
 	@Test
-	public void testInts() {
+	public void testList() {
 		assertEquals(List.of(2, 3, 4), arrayList(list(2, 3, 4)));
+	}
+	
+	@Test
+	public void testIterableString() {
+		assertEquals(List.of(97, 98, 99), arrayList(iterable("abc")));
+		assertEquals(List.of(97, 171581, 99), arrayList(iterable("a𩸽c")));
 	}
 
 	@Test
@@ -68,6 +74,13 @@ public class TestIterables {
 		assertEquals(List.of(0, 2, 4), arrayList(filter(n -> n % 2 == 0, range(0, 5))));
 		assertEquals(List.of(0, 4), arrayList(filter((i, n) -> i == n, list(0, 9, 8, 7, 4))));
 		assertEquals(List.of(10, 30), arrayList(map(n -> 10 * n, filter(n -> n % 2 == 1, range(0, 5)))));
+	}
+	
+	@Test
+	public void testReduce() {
+		assertEquals((Integer)45, reduce(0, Integer::sum, rangeClosed(1, 9)));
+		assertEquals((Integer)45, reduce(Integer::sum, rangeClosed(1, 9)));
+		assertEquals((Integer)120, reduce((a, b) -> a * b, rangeClosed(1, 5)));
 	}
 
 	@Test
