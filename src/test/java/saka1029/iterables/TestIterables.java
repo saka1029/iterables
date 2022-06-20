@@ -95,4 +95,19 @@ public class TestIterables {
 		assertEquals(Map.of(0, "zero", 1, "one"),
 			treeMap(N::i, N::s, List.of(new N(0, "zero"), new N(1, "one"))));
 	}
+	
+	@Test
+	public void testAnd() {
+		record R(String s, int i) {}
+		R a0 = new R("a", 0);
+		R a1 = new R("a", 1);
+		R b0 = new R("b", 0);
+		R b1 = new R("b", 1);
+		List<R> list = List.of(a0, a1, b0, b1);
+		assertEquals(List.of(a0, a1, b0, b1), arrayList(sort(and(asc(R::s), asc(R::i)), list)));
+		assertEquals(List.of(a1, a0, b1, b0), arrayList(sort(and(asc(R::s), desc(R::i)), list)));
+		assertEquals(List.of(b0, b1, a0, a1), arrayList(sort(and(desc(R::s), asc(R::i)), list)));
+		assertEquals(List.of(b1, b0, a1, a0), arrayList(sort(and(desc(R::s), desc(R::i)), list)));
+		assertEquals(List.of(b1, b0, a1, a0), arrayList(sort(and(reverse(asc(R::s)), reverse(asc(R::i))), list)));
+	}
 }

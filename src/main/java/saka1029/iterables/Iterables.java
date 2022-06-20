@@ -1,6 +1,7 @@
 package saka1029.iterables;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -146,6 +147,16 @@ public class Iterables {
 			
 		};
 	}
+	
+	public static <T> Iterable<T> sort(Comparator<T> comparator, Iterable<T> source) {
+		List<T> list = arrayList(source);
+		list.sort(comparator);
+		return list;
+	}
+	
+	public static <T extends Comparable<T>> Iterable<T> sort(Iterable<T> source) {
+		return sort(Comparator.naturalOrder(), source);
+	}
 
 	public static <T> Iterable<T> filter(BiPredicate<Integer, T> selector, Iterable<T> source) {
 		return () -> new Iterator<T>() {
@@ -239,5 +250,24 @@ public class Iterables {
 	public static <T, K, V> TreeMap<K, V> treeMap(Function<T, K> key, Function<T, V> value, Iterable<T> source) {
 		return (TreeMap<K, V>)map(TreeMap::new, key, value, source);
 	}
+	
+	public static <T, U extends Comparable<U>> Comparator<T> asc(Function<T, U> extractor) {
+		return (a, b) -> extractor.apply(a).compareTo(extractor.apply(b));
+	}
+
+	public static <T, U extends Comparable<U>> Comparator<T> desc(Function<T, U> extractor) {
+		return (a, b) -> extractor.apply(b).compareTo(extractor.apply(a));
+	}
+
+	public static <T> Comparator<T> reverse(Comparator<T> comparator) {
+		return comparator.reversed();
+	}
+
+    @SafeVarargs
+    public static <T> Comparator<T> and(Comparator<T> first, Comparator<T>... rest) {
+        for (Comparator<T> c : rest)
+            first = first.thenComparing(c);
+        return first;
+    }
 
 }
