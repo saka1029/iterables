@@ -1,5 +1,6 @@
 package saka1029.iterables;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
@@ -61,6 +62,7 @@ public class TestIterables {
 		assertEquals(List.of(97, 98, 99), arrayList(it));
 		assertEquals(List.of(97, 98, 99), arrayList(it));
 		assertEquals(List.of("a", "𩸽", "c"), arrayList(map(Character::toString, iterable("a𩸽c"))));
+		assertEquals("a𩸽c", string(iterable("a𩸽c")));
 	}
 
 	@Test
@@ -98,6 +100,17 @@ public class TestIterables {
 	@Test
 	public void testReverse() {
 		assertEquals(List.of(3, 4, 1, 0, 2), reverse(list(2, 0, 1, 4, 3)));
+	}
+	
+	@Test
+	public void testArray() {
+		assertArrayEquals(new int[] {1, 2, 3}, array(list(1, 2, 3)));
+	}
+	
+	@Test
+	public void testString() {
+		assertEquals("[a, b, c]", string("[", ", ", "]", List.of("a", "b", "c")));
+		assertEquals("[0, 1, 2]", string("[", ", ", "]", list(0, 1, 2)));
 	}
 	
 	@Test

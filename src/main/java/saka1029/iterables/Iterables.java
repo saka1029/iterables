@@ -250,6 +250,8 @@ public class Iterables {
 		};
 	}
 	
+	// Terminal operations
+	
 	public static <T> T reduce(BinaryOperator<T> reducer, Iterable<T> source) {
 		T result = null;
 		boolean first = true;
@@ -320,6 +322,26 @@ public class Iterables {
 	public static <T, K, V> TreeMap<K, V> treeMap(Function<T, K> key, Function<T, V> value, Iterable<T> source) {
 		return (TreeMap<K, V>)map(TreeMap::new, key, value, source);
 	}
+	
+	public static String string(Iterable<Integer> source) {
+		StringBuilder sb = new StringBuilder();
+		for (int cp : source)
+			sb.appendCodePoint(cp);
+		return sb.toString();
+	}
+
+	public static <T> String string(String begin, String separator, String end, Iterable<T> source) {
+		StringBuilder sb = new StringBuilder(begin);
+		String sep = "";
+		for (T e : source) {
+			sb.append(sep).append(e);
+			sep = separator;
+		}
+		sb.append(end);
+		return sb.toString();
+	}
+	
+	// Comparators
 	
 	public static <T, U extends Comparable<U>> Comparator<T> asc(Function<T, U> extractor) {
 		return Comparator.comparing(extractor);
