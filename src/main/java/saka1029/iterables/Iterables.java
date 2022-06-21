@@ -23,6 +23,8 @@ import java.util.stream.Stream;
 
 public class Iterables {
 	
+	private Iterables() {}
+	
 	public static <T, C> Iterator<T> iterator(C context, Predicate<C> hasNext, Function<C, T> next) {
 		return new Iterator<T>() {
 

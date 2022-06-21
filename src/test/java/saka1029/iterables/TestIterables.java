@@ -3,6 +3,7 @@ package saka1029.iterables;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static saka1029.iterables.Iterables.*;
 
@@ -19,6 +20,18 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 public class TestIterables {
+	
+	@Test
+	public void testIterator() {
+		Iterator<Integer> it = iterator(new Object() { int i = 0; }, c -> c.i < 3, c -> c.i++);
+		assertTrue(it.hasNext());
+		assertEquals(0, (int)it.next());
+		assertTrue(it.hasNext());
+		assertEquals(1, (int)it.next());
+		assertTrue(it.hasNext());
+		assertEquals(2, (int)it.next());
+		assertFalse(it.hasNext());
+	}
 
 	@Test
 	public void testIterable() {
@@ -34,8 +47,15 @@ public class TestIterables {
 		} catch (IllegalStateException e) {
 			assertEquals("stream has already been operated upon or closed", e.getMessage());
 		}
+		Iterator<Integer> it = iterable(new Object() { int i = 0;}, c -> c.i < 3, c -> c.i++).iterator();
+		assertTrue(it.hasNext());
+		assertEquals(0, (int)it.next());
+		assertEquals(1, (int)it.next());
+		assertEquals(2, (int)it.next());
+		assertFalse(it.hasNext());
 	}
 	
+	@Test
 	public void testRangeIntInt() {
 		assertEquals(List.of(2, 3, 4), arrayList(range(2, 5)));
 		assertEquals(List.of(), arrayList(range(2, 2)));
@@ -105,12 +125,14 @@ public class TestIterables {
 	@Test
 	public void testArray() {
 		assertArrayEquals(new int[] {1, 2, 3}, array(list(1, 2, 3)));
+		assertArrayEquals(new Integer[] {1, 2, 3}, array(Integer[]::new, list(1, 2, 3)));
 	}
 	
 	@Test
 	public void testString() {
 		assertEquals("[a, b, c]", string("[", ", ", "]", List.of("a", "b", "c")));
 		assertEquals("[0, 1, 2]", string("[", ", ", "]", list(0, 1, 2)));
+		assertEquals("\0\1\2", string(list(0, 1, 2)));
 	}
 	
 	@Test
@@ -147,6 +169,17 @@ public class TestIterables {
 	public void testTreeMap() {
 		assertEquals(Map.of(0, "zero", 1, "one"),
 			treeMap(N::i, N::s, List.of(new N(0, "zero"), new N(1, "one"))));
+	}
+
+	@Test
+	public void testHashSet() {
+		assertEquals(List.of(0, 1, 2), arrayList(hashSet(list(2, 0, 1, 1, 0))));
+	}
+
+	@Test
+	public void testTreeSet() {
+		assertEquals(List.of(0, 1, 2), arrayList(treeSet(list(2, 0, 1, 1, 0))));
+		assertEquals(List.of(2, 1, 0), arrayList(treeSet(desc(i -> i), list(2, 0, 1, 1, 0))));
 	}
 	
 	@Test
