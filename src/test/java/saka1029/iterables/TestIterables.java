@@ -123,6 +123,18 @@ public class TestIterables {
 	}
 	
 	@Test
+	public void testAllMatch() {
+		assertTrue(allMatch(i -> i >= 0, range(0, 3)));
+		assertFalse(allMatch(i -> i <= 1, range(0, 3)));
+	}
+	
+	@Test
+	public void testAnyMatch() {
+		assertTrue(anyMatch(i -> i == 0, range(0, 3)));
+		assertFalse(anyMatch(i -> i < 0, range(0, 3)));
+	}
+	
+	@Test
 	public void testSkip() {
 		assertEquals(List.of(3, 4), arrayList(skip(3, range(0, 5))));
 		assertEquals(List.of(), arrayList(skip(3, range(0, 3))));

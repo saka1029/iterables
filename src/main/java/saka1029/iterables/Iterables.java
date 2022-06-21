@@ -281,6 +281,20 @@ public class Iterables {
 	
 	// Terminal operations
 	
+	public static <T> boolean allMatch(Predicate<T> predicate, Iterable<T> source) {
+		for (T t : source)
+			if (!predicate.test(t))
+				return false;
+		return true;
+	}
+	
+	public static <T> boolean anyMatch(Predicate<T> predicate, Iterable<T> source) {
+		for (T t : source)
+			if (predicate.test(t))
+				return true;
+		return false;
+	}
+
 	public static <T> T reduce(BinaryOperator<T> reducer, Iterable<T> source) {
 		T result = null;
 		boolean first = true;
