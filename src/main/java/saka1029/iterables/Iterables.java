@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
@@ -25,6 +26,13 @@ public class Iterables {
 	
 	private Iterables() {}
 	
+	@SafeVarargs
+	public static <T> T prog0(T result, Consumer<T>... progs) {
+		for (Consumer<T> c : progs)
+			c.accept(result);
+		return result;
+	}
+
 	public static <T, C> Iterator<T> iterator(C context, Predicate<C> hasNext, Function<C, T> next) {
 		return new Iterator<T>() {
 
@@ -102,9 +110,7 @@ public class Iterables {
 
 			@Override
 			public Integer next() {
-				int result = i;
-				i += step;
-				return result;
+				return prog0(i, c -> this.i += step);
 			}
 			
 		};
@@ -178,9 +184,7 @@ public class Iterables {
 	}
 	
 	public static <T> List<T> sort(Comparator<T> comparator, Iterable<T> source) {
-		List<T> list = arrayList(source);
-		list.sort(comparator);
-		return list;
+		return prog0(arrayList(source), list -> list.sort(comparator));
 	}
 	
 	public static <T extends Comparable<T>> List<T> sort(Iterable<T> source) {
@@ -215,9 +219,7 @@ public class Iterables {
 
 			@Override
 			public T next() {
-				T result = next;
-				hasNext = advance();
-				return result;
+				return prog0(next, c -> this.hasNext = advance());
 			}
 			
 		};
@@ -244,9 +246,7 @@ public class Iterables {
 
 			@Override
 			public T next() {
-				T result = next;
-				hasNext = advance();
-				return result;
+				return prog0(next, c -> this.hasNext = advance());
 			}
 			
 		};

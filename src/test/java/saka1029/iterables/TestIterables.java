@@ -40,19 +40,19 @@ public class TestIterables {
 		assertEquals(1, (int)iterator.next());
 		assertEquals(2, (int)iterator.next());
 		assertFalse(iterator.hasNext());
-		try {
-            Iterator<Integer> iterator2 = iterable.iterator();
-            fail();
-            assertEquals(1, (int)iterator2.next());
-		} catch (IllegalStateException e) {
-			assertEquals("stream has already been operated upon or closed", e.getMessage());
-		}
 		Iterator<Integer> it = iterable(new Object() { int i = 0;}, c -> c.i < 3, c -> c.i++).iterator();
 		assertTrue(it.hasNext());
 		assertEquals(0, (int)it.next());
 		assertEquals(1, (int)it.next());
 		assertEquals(2, (int)it.next());
 		assertFalse(it.hasNext());
+	}
+	
+	@Test(expected = IllegalStateException.class)
+	public void testIterableError() {
+		Iterable<Integer> iterable = iterable(Stream.of(1, 2));
+        iterable.iterator();
+        iterable.iterator();
 	}
 	
 	@Test
