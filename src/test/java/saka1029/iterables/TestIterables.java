@@ -123,6 +123,19 @@ public class TestIterables {
 	}
 	
 	@Test
+	public void testSkip() {
+		assertEquals(List.of(3, 4), arrayList(skip(3, range(0, 5))));
+		assertEquals(List.of(), arrayList(skip(3, range(0, 3))));
+	}
+	
+	@Test
+	public void testLimit() {
+		assertEquals(List.of(0, 1, 2), arrayList(limit(3, range(0, 5))));
+		assertEquals(List.of(0, 1, 2, 3, 4), arrayList(limit(9, range(0, 5))));
+		assertEquals(List.of(), arrayList(limit(0, range(0, 5))));
+	}
+	
+	@Test
 	public void testArray() {
 		assertArrayEquals(new int[] {1, 2, 3}, array(list(1, 2, 3)));
 		assertArrayEquals(new Integer[] {1, 2, 3}, array(Integer[]::new, list(1, 2, 3)));

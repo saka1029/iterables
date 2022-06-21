@@ -192,9 +192,7 @@ public class Iterables {
 	}
 
 	public static <T> List<T> reverse(Iterable<T> source) {
-		List<T> list = arrayList(source);
-		Collections.reverse(list);
-		return list;
+		return prog0(arrayList(source), list -> Collections.reverse(list));
 	}
 
 	public static <T> Iterable<T> filter(BiPredicate<Integer, T> selector, Iterable<T> source) {
@@ -247,6 +245,35 @@ public class Iterables {
 			@Override
 			public T next() {
 				return prog0(next, c -> this.hasNext = advance());
+			}
+			
+		};
+	}
+	
+	public static <T> Iterable<T> skip(int skip, Iterable<T> source) {
+		return () -> {
+			Iterator<T> iterator = source.iterator();
+			for (int i = 0; i < skip && iterator.hasNext(); ++i)
+				iterator.next();
+			return iterator;
+		};
+	}
+	
+	public static <T> Iterable<T> limit(int limit, Iterable<T> source) {
+		return () -> new Iterator<T>() {
+			
+			final Iterator<T> iterator = source.iterator();
+			int i = 0;
+
+			@Override
+			public boolean hasNext() {
+				return iterator.hasNext() && i < limit;
+			}
+
+			@Override
+			public T next() {
+				++i;
+				return iterator.next();
 			}
 			
 		};
