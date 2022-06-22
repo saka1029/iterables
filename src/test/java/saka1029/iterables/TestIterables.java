@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import static saka1029.iterables.Iterables.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -15,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -100,6 +102,12 @@ public class TestIterables {
 		assertEquals(List.of(0, 2, 4), arrayList(filter(n -> n % 2 == 0, range(0, 5))));
 		assertEquals(List.of(0, 4), arrayList(filter((i, n) -> i == n, list(0, 9, 8, 7, 4))));
 		assertEquals(List.of(10, 30), arrayList(map(n -> 10 * n, filter(n -> n % 2 == 1, range(0, 5)))));
+	}
+	
+	@Test
+	public void testAcumulate() {
+		assertEquals(List.of(0, 1, 3, 6), arrayList(acumulate(0, Integer::sum, range(0, 4))));
+		assertEquals(List.of(1, 2, 6, 24), arrayList(acumulate(1, (a, b) -> a * b, range(1, 5))));
 	}
 	
 	@Test
@@ -220,5 +228,17 @@ public class TestIterables {
 		assertEquals(List.of(b0, b1, a0, a1), arrayList(sort(and(desc(R::s), asc(R::i)), list)));
 		assertEquals(List.of(b1, b0, a1, a0), arrayList(sort(and(desc(R::s), desc(R::i)), list)));
 		assertEquals(List.of(b1, b0, a1, a0), arrayList(sort(and(reverse(asc(R::s)), reverse(asc(R::i))), list)));
+	}
+	
+	@Test
+	public void testIntArray() {
+		int[] a = {3, 1, 2, 3,  4};
+		int[] b = {1, 2, 3};
+		int[] c = Stream.of(a, b)
+			.flatMapToInt(x -> IntStream.of(x))
+			.distinct()
+			.sorted()
+			.toArray();
+		System.out.println(Arrays.toString(c));
 	}
 }

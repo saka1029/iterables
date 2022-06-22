@@ -32,6 +32,10 @@ public class Iterables {
 			c.accept(result);
 		return result;
 	}
+	
+	public static <T> boolean isEmpty(Iterable<T> source) {
+		return !source.iterator().hasNext();
+	}
 
 	public static <T, C> Iterator<T> iterator(C context, Predicate<C> hasNext, Function<C, T> next) {
 		return new Iterator<T>() {
@@ -279,6 +283,25 @@ public class Iterables {
 		};
 	}
 	
+	public static <T, U> Iterable<U> acumulate(U unit, BiFunction<U, T, U> operator, Iterable<T> source) {
+		return () -> new Iterator<U>() {
+
+			final Iterator<T> iterator = source.iterator();
+			U accumulator = unit;
+			
+			@Override
+			public boolean hasNext() {
+				return iterator.hasNext();
+			}
+
+			@Override
+			public U next() {
+				return accumulator = operator.apply(accumulator, iterator.next());
+			}
+			
+		};
+	}
+	
 	// Terminal operations
 	
 	public static <T> boolean allMatch(Predicate<T> predicate, Iterable<T> source) {
@@ -302,6 +325,8 @@ public class Iterables {
 			result = first ? t : reducer.apply(result, t);
 			first = false;
 		}
+		if (first)
+			throw new IllegalStateException("empty source");
 		return result;
 	}
 
@@ -309,6 +334,22 @@ public class Iterables {
 		for (T t : source)
 			unit = reducer.apply(unit, t);
 		return unit;
+	}
+	
+	public static int count(Iterable<Integer> source) {
+		return reduce(0, (a, b) -> ++a, source);
+	}
+	
+	public static int sum(Iterable<Integer> source) {
+		return reduce(0, Integer::sum, source);
+	}
+	
+	public static int max(Iterable<Integer> source) {
+		return reduce(Math::max, source);
+	}
+	
+	public static int min(Iterable<Integer> source) {
+		return reduce(Math::min, source);
 	}
 	
 	public static <T> Collection<T> collection(Supplier<Collection<T>> constructor, Iterable<T> source) {
