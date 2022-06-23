@@ -131,24 +131,24 @@ public class Iterables {
 		return () -> s.codePoints().iterator();
 	}
 
-	public static <T, U> Iterable<U> map(BiFunction<Integer, T, U> mapper, Iterable<T> source) {
-		return () -> new Iterator<U>() {
-
-			final Iterator<T> iterator = source.iterator();
-			int i = 0;
-
-			@Override
-			public boolean hasNext() {
-				return iterator.hasNext();
-			}
-
-			@Override
-			public U next() {
-				return mapper.apply(i++, iterator.next());
-			}
-			
-		};
-	}
+//	public static <T, U> Iterable<U> map(BiFunction<Integer, T, U> mapper, Iterable<T> source) {
+//		return () -> new Iterator<U>() {
+//
+//			final Iterator<T> iterator = source.iterator();
+//			int i = 0;
+//
+//			@Override
+//			public boolean hasNext() {
+//				return iterator.hasNext();
+//			}
+//
+//			@Override
+//			public U next() {
+//				return mapper.apply(i++, iterator.next());
+//			}
+//			
+//		};
+//	}
 
 	public static <T, U> Iterable<U> map(Function<T, U> mapper, Iterable<T> source) {
 		return () -> new Iterator<U>() {
@@ -199,33 +199,33 @@ public class Iterables {
 		return prog0(arrayList(source), list -> Collections.reverse(list));
 	}
 
-	public static <T> Iterable<T> filter(BiPredicate<Integer, T> selector, Iterable<T> source) {
-		return () -> new Iterator<T>() {
-
-			final Iterator<T> iterator = source.iterator();
-			int index = 0;
-			boolean hasNext = advance();
-			T next;
-			
-			boolean advance() {
-				while (iterator.hasNext())
-					if (selector.test(index++, next = iterator.next()))
-						return true;
-				return false;
-			}
-
-			@Override
-			public boolean hasNext() {
-				return hasNext;
-			}
-
-			@Override
-			public T next() {
-				return prog0(next, c -> this.hasNext = advance());
-			}
-			
-		};
-	}
+//	public static <T> Iterable<T> filter(BiPredicate<Integer, T> selector, Iterable<T> source) {
+//		return () -> new Iterator<T>() {
+//
+//			final Iterator<T> iterator = source.iterator();
+//			int index = 0;
+//			boolean hasNext = advance();
+//			T next;
+//			
+//			boolean advance() {
+//				while (iterator.hasNext())
+//					if (selector.test(index++, next = iterator.next()))
+//						return true;
+//				return false;
+//			}
+//
+//			@Override
+//			public boolean hasNext() {
+//				return hasNext;
+//			}
+//
+//			@Override
+//			public T next() {
+//				return prog0(next, c -> this.hasNext = advance());
+//			}
+//			
+//		};
+//	}
 
 	public static <T> Iterable<T> filter(Predicate<T> selector, Iterable<T> source) {
 		return () -> new Iterator<T>() {
@@ -336,7 +336,7 @@ public class Iterables {
 		return unit;
 	}
 	
-	public static int count(Iterable<Integer> source) {
+	public static <T> int count(Iterable<T> source) {
 		return reduce(0, (a, b) -> ++a, source);
 	}
 	
@@ -344,12 +344,20 @@ public class Iterables {
 		return reduce(0, Integer::sum, source);
 	}
 	
-	public static int max(Iterable<Integer> source) {
-		return reduce(Math::max, source);
+	public static <T extends Comparable<T>> T max(Iterable<T> source) {
+		return max(Comparator.naturalOrder(), source);
+	}
+
+	public static <T extends Comparable<T>> T min(Iterable<T> source) {
+		return min(Comparator.naturalOrder(), source);
+	}
+
+	public static <T> T max(Comparator<T> comparator, Iterable<T> source) {
+		return reduce((a, b) -> comparator.compare(a, b) < 0 ? b : a, source);
 	}
 	
-	public static int min(Iterable<Integer> source) {
-		return reduce(Math::min, source);
+	public static <T> T min(Comparator<T> comparator, Iterable<T> source) {
+		return reduce((a, b) -> comparator.compare(a, b) > 0 ? b : a, source);
 	}
 	
 	public static <T> Collection<T> collection(Supplier<Collection<T>> constructor, Iterable<T> source) {
@@ -433,6 +441,14 @@ public class Iterables {
 
 	public static <T, U extends Comparable<U>> Comparator<T> desc(Function<T, U> extractor) {
 		return Comparator.comparing(extractor).reversed();
+	}
+
+	public static <T extends Comparable<T>> Comparator<T> asc() {
+		return asc(x -> x);
+	}
+
+	public static <T extends Comparable<T>> Comparator<T> desc() {
+		return desc(x -> x);
 	}
 
 	public static <T> Comparator<T> reverse(Comparator<T> comparator) {

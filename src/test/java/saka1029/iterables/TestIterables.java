@@ -24,6 +24,12 @@ import org.junit.Test;
 public class TestIterables {
 	
 	@Test
+	public void testIsEmpty() {
+		assertTrue(isEmpty(range(0, 0)));
+		assertFalse(isEmpty(range(0, 1)));
+	}
+
+	@Test
 	public void testIterator() {
 		Iterator<Integer> it = iterator(new Object() { int i = 0; }, c -> c.i < 3, c -> c.i++);
 		assertTrue(it.hasNext());
@@ -90,9 +96,9 @@ public class TestIterables {
 	@Test
 	public void testMap() {
 		assertEquals(List.of(20, 30, 40), arrayList(map(n -> n * 10, list(2, 3, 4))));
-		assertEquals(List.of(12, 23, 34), arrayList(map((i, n) -> ++i * 10 + n, list(2, 3, 4))));
-		assertEquals(List.of("0:zero", "1:one"),
-            arrayList(map((i, n) -> i + ":" + n, List.of("zero", "one"))));
+//		assertEquals(List.of(12, 23, 34), arrayList(map((i, n) -> ++i * 10 + n, list(2, 3, 4))));
+//		assertEquals(List.of("0:zero", "1:one"),
+//            arrayList(map((i, n) -> i + ":" + n, List.of("zero", "one"))));
 		assertEquals(List.of("0:zero", "1:one"),
             arrayList(map((l, r) -> l + ":" + r, range(0, 5), List.of("zero", "one"))));
 	}
@@ -100,7 +106,7 @@ public class TestIterables {
 	@Test
 	public void testFilter() {
 		assertEquals(List.of(0, 2, 4), arrayList(filter(n -> n % 2 == 0, range(0, 5))));
-		assertEquals(List.of(0, 4), arrayList(filter((i, n) -> i == n, list(0, 9, 8, 7, 4))));
+//		assertEquals(List.of(0, 4), arrayList(filter((i, n) -> i == n, list(0, 9, 8, 7, 4))));
 		assertEquals(List.of(10, 30), arrayList(map(n -> 10 * n, filter(n -> n % 2 == 1, range(0, 5)))));
 	}
 	
@@ -112,9 +118,10 @@ public class TestIterables {
 	
 	@Test
 	public void testReduce() {
-		assertEquals((Integer)45, reduce(0, Integer::sum, rangeClosed(1, 9)));
-		assertEquals((Integer)45, reduce(Integer::sum, rangeClosed(1, 9)));
-		assertEquals((Integer)120, reduce((a, b) -> a * b, rangeClosed(1, 5)));
+		assertEquals(45, (int)reduce(0, Integer::sum, rangeClosed(1, 9)));
+		assertEquals(45, (int)reduce(Integer::sum, rangeClosed(1, 9)));
+		assertEquals(120, (int)reduce((a, b) -> a * b, rangeClosed(1, 5)));
+		assertEquals(1234, (int)reduce((a, b) -> a * 10 + b, rangeClosed(1, 4)));
 	}
 
 	@Test
@@ -140,6 +147,41 @@ public class TestIterables {
 	public void testAnyMatch() {
 		assertTrue(anyMatch(i -> i == 0, range(0, 3)));
 		assertFalse(anyMatch(i -> i < 0, range(0, 3)));
+	}
+	
+	@Test
+	public void testCount() {
+		assertEquals(3, count(range(0, 3)));
+		assertEquals(0, count(range(0, 0)));
+	}
+	
+	@Test
+	public void testSum() {
+		assertEquals(3, sum(range(0, 3)));
+		assertEquals(0, sum(range(0, 0)));
+		assertEquals(3, sum(map(Integer::parseInt, List.of("1", "2"))));
+	}
+	
+	@Test
+	public void testMin() {
+		assertEquals(0, (int)min(range(0, 3)));
+		assertEquals("A", min(List.of("A", "B", "C")));
+	}
+	
+	@Test(expected = IllegalStateException.class)
+	public void testMinException() {
+		assertEquals(0, (int)min(range(0, 0)));
+	}
+	
+	@Test
+	public void testMax() {
+		assertEquals(2, (int)max(range(0, 3)));
+		assertEquals("C", max(List.of("A", "B", "C")));
+	}
+	
+	@Test(expected = IllegalStateException.class)
+	public void testMaxException() {
+		assertEquals(0, (int)max(range(0, 0)));
 	}
 	
 	@Test
@@ -228,17 +270,5 @@ public class TestIterables {
 		assertEquals(List.of(b0, b1, a0, a1), arrayList(sort(and(desc(R::s), asc(R::i)), list)));
 		assertEquals(List.of(b1, b0, a1, a0), arrayList(sort(and(desc(R::s), desc(R::i)), list)));
 		assertEquals(List.of(b1, b0, a1, a0), arrayList(sort(and(reverse(asc(R::s)), reverse(asc(R::i))), list)));
-	}
-	
-	@Test
-	public void testIntArray() {
-		int[] a = {3, 1, 2, 3,  4};
-		int[] b = {1, 2, 3};
-		int[] c = Stream.of(a, b)
-			.flatMapToInt(x -> IntStream.of(x))
-			.distinct()
-			.sorted()
-			.toArray();
-		System.out.println(Arrays.toString(c));
 	}
 }
