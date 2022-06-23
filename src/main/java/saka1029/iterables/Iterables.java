@@ -336,6 +336,10 @@ public class Iterables {
 		return unit;
 	}
 	
+	public static <T> void forEach(Consumer<T> body, Iterable<T> source) {
+		source.forEach(body);
+	}
+	
 	public static <T> int count(Iterable<T> source) {
 		return reduce(0, (a, b) -> ++a, source);
 	}
@@ -464,6 +468,23 @@ public class Iterables {
         for (Comparator<T> c : rest)
             first = first.thenComparing(c);
         return first;
+    }
+    
+    public static class Statistics {
+    	long count;
+    	double sum;
+    	double squareSum;
+    	
+    	public void add(Number n) {
+    		++count;
+    		double value = n.doubleValue();
+    		sum += value;
+    		squareSum += value * value;
+    	}
+    }
+    
+    public static <T extends Number> Statistics statistics(Iterable<T> source) {
+    	return prog0(new Statistics(), s -> source.forEach(e -> s.add(e)));
     }
 
 }

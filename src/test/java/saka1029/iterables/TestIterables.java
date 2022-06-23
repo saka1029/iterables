@@ -271,4 +271,24 @@ public class TestIterables {
 		assertEquals(List.of(b1, b0, a1, a0), arrayList(sort(and(desc(R::s), desc(R::i)), list)));
 		assertEquals(List.of(b1, b0, a1, a0), arrayList(sort(and(reverse(asc(R::s)), reverse(asc(R::i))), list)));
 	}
+	
+	@Test
+	public void testAsc() {
+		assertEquals(List.of(0, 1, 2, 3), sort(asc(i -> i), range(0, 4)));
+		assertEquals(List.of(0, 1, 2, 3), sort(asc(), range(0, 4)));
+	}
+	
+	@Test
+	public void testDesc() {
+		assertEquals(List.of(3, 2, 1, 0), sort(desc(i -> i), range(0, 4)));
+		assertEquals(List.of(3, 2, 1, 0), sort(desc(), range(0, 4)));
+	}
+	
+	@Test
+	public void testStatistics() {
+		Statistics s = statistics(range(0, 10));
+		assertEquals(10, s.count);
+		assertEquals(45, s.sum, 0.1);
+		assertEquals(285, s.squareSum, 0.1);
+	}
 }
