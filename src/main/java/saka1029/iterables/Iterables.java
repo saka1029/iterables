@@ -419,7 +419,7 @@ public class Iterables {
 		return (TreeMap<K, V>)map(TreeMap::new, key, value, source);
 	}
 	
-	public static String string(Iterable<Integer> source) {
+	public static String cpstring(Iterable<Integer> source) {
 		StringBuilder sb = new StringBuilder();
 		for (int cp : source)
 			sb.appendCodePoint(cp);

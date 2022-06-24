@@ -90,7 +90,7 @@ public class TestIterables {
 		assertEquals(List.of(97, 98, 99), arrayList(it));
 		assertEquals(List.of(97, 98, 99), arrayList(it));
 		assertEquals(List.of("a", "𩸽", "c"), arrayList(map(Character::toString, iterable("a𩸽c"))));
-		assertEquals("a𩸽c", string(iterable("a𩸽c")));
+		assertEquals("a𩸽c", cpstring(iterable("a𩸽c")));
 	}
 
 	@Test
@@ -207,7 +207,7 @@ public class TestIterables {
 	public void testString() {
 		assertEquals("[a, b, c]", string("[", ", ", "]", List.of("a", "b", "c")));
 		assertEquals("[0, 1, 2]", string("[", ", ", "]", list(0, 1, 2)));
-		assertEquals("\0\1\2", string(list(0, 1, 2)));
+		assertEquals("\0\1\2", cpstring(list(0, 1, 2)));
 	}
 	
 	@Test
