@@ -111,6 +111,22 @@ public class TestIterables {
 	}
 	
 	@Test
+	public void testFlatMap() {
+		List<int[]> input = List.of(
+			new int[] {1,1,1,1,1},
+		    new int[] {0,1,0,1,1},
+		    new int[] {0,0,0,0,0});
+		assertArrayEquals(new int[] {1,1,1,1,1,0,1,0,1,1,0,0,0,0,0},
+			array(flatMap(Iterables::list, input)));
+		assertArrayEquals(new int[] {0, 1, 2},
+			array(flatMap(e -> list(e),
+				List.of(new int[] {0}, new int[] {}, new int[] {1, 2}))));
+		assertArrayEquals(new int[] {0, 1, 2},
+			array(flatMap(e -> list(e),
+				List.of(new int[] {}, new int[] {0, 1, 2}, new int[] {}))));
+	}
+	
+	@Test
 	public void testAcumulate() {
 		assertEquals(List.of(0, 1, 3, 6), arrayList(acumulate(0, Integer::sum, range(0, 4))));
 		assertEquals(List.of(1, 2, 6, 24), arrayList(acumulate(1, (a, b) -> a * b, range(1, 5))));
@@ -208,6 +224,7 @@ public class TestIterables {
 		assertEquals("[a, b, c]", string("[", ", ", "]", List.of("a", "b", "c")));
 		assertEquals("[0, 1, 2]", string("[", ", ", "]", list(0, 1, 2)));
 		assertEquals("\0\1\2", cpstring(list(0, 1, 2)));
+		assertEquals("012", string("", "", "", list(0, 1, 2)));
 	}
 	
 	@Test
