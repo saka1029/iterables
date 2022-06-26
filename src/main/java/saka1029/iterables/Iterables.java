@@ -127,28 +127,46 @@ public class Iterables {
 		return list;
 	}
 	
-	public static Iterable<Integer> iterable(String s) {
+	public static Iterable<Integer> codePoints(String s) {
 		return () -> s.codePoints().iterator();
 	}
+	
+	@SafeVarargs
+	public static <T> Iterable<T> concat(Iterable<T>... sources) {
+		return () -> new Iterator<T>() {
 
-//	public static <T, U> Iterable<U> map(BiFunction<Integer, T, U> mapper, Iterable<T> source) {
-//		return () -> new Iterator<U>() {
-//
-//			final Iterator<T> iterator = source.iterator();
-//			int i = 0;
-//
-//			@Override
-//			public boolean hasNext() {
-//				return iterator.hasNext();
-//			}
-//
-//			@Override
-//			public U next() {
-//				return mapper.apply(i++, iterator.next());
-//			}
-//			
-//		};
-//	}
+			Iterator<Iterable<T>> iterators = List.of(sources).iterator();
+			Iterator<T> iterator = null;
+			boolean hasNext = advance();
+			T next;
+			
+			boolean advance() {
+				while (true) {
+                    if (iterator == null) {
+                    	if (!iterators.hasNext())
+                    		return false;
+                        iterator = iterators.next().iterator();
+                    }
+                    if (iterator.hasNext()) {
+                    	next = iterator.next();
+                    	return true;
+                    }
+                    iterator = null;
+				}
+			}
+
+			@Override
+			public boolean hasNext() {
+				return hasNext;
+			}
+
+			@Override
+			public T next() {
+				return prog0(next, t -> hasNext = advance());
+			}
+			
+		};
+	}
 
 	public static <T, U> Iterable<U> map(Function<T, U> mapper, Iterable<T> source) {
 		return () -> new Iterator<U>() {
@@ -198,34 +216,6 @@ public class Iterables {
 	public static <T> List<T> reverse(Iterable<T> source) {
 		return prog0(arrayList(source), list -> Collections.reverse(list));
 	}
-
-//	public static <T> Iterable<T> filter(BiPredicate<Integer, T> selector, Iterable<T> source) {
-//		return () -> new Iterator<T>() {
-//
-//			final Iterator<T> iterator = source.iterator();
-//			int index = 0;
-//			boolean hasNext = advance();
-//			T next;
-//			
-//			boolean advance() {
-//				while (iterator.hasNext())
-//					if (selector.test(index++, next = iterator.next()))
-//						return true;
-//				return false;
-//			}
-//
-//			@Override
-//			public boolean hasNext() {
-//				return hasNext;
-//			}
-//
-//			@Override
-//			public T next() {
-//				return prog0(next, c -> this.hasNext = advance());
-//			}
-//			
-//		};
-//	}
 
 	public static <T> Iterable<T> filter(Predicate<T> selector, Iterable<T> source) {
 		return () -> new Iterator<T>() {

@@ -10,12 +10,14 @@ import static saka1029.iterables.Iterables.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -83,14 +85,14 @@ public class TestIterables {
 	}
 	
 	@Test
-	public void testIterableString() {
-		assertEquals(List.of(97, 98, 99), arrayList(iterable("abc")));
-		assertEquals(List.of(97, 171581, 99), arrayList(iterable("a𩸽c")));
-		Iterable<Integer> it = iterable("abc");
+	public void testCodePoints() {
+		assertEquals(List.of(97, 98, 99), arrayList(codePoints("abc")));
+		assertEquals(List.of(97, 171581, 99), arrayList(codePoints("a𩸽c")));
+		Iterable<Integer> it = codePoints("abc");
 		assertEquals(List.of(97, 98, 99), arrayList(it));
 		assertEquals(List.of(97, 98, 99), arrayList(it));
-		assertEquals(List.of("a", "𩸽", "c"), arrayList(map(Character::toString, iterable("a𩸽c"))));
-		assertEquals("a𩸽c", string(iterable("a𩸽c")));
+		assertEquals(List.of("a", "𩸽", "c"), arrayList(map(Character::toString, codePoints("a𩸽c"))));
+		assertEquals("a𩸽c", string(codePoints("a𩸽c")));
 	}
 
 	@Test
@@ -290,5 +292,10 @@ public class TestIterables {
 		assertEquals(10, s.count);
 		assertEquals(45, s.sum, 0.1);
 		assertEquals(285, s.squareSum, 0.1);
+	}
+	
+	@Test
+	public void testConcat() {
+		assertArrayEquals(new int[] {0, 1, 2, 3}, array(concat(rangeClosed(0, 1), rangeClosed(2, 3))));
 	}
 }
