@@ -244,6 +244,43 @@ public class Iterables {
 		};
 	}
 	
+	public static <T, U> Iterable<U> flatMap(Function<T, Iterable<U>> flatter, Iterable<T> source) {
+		return () -> new Iterator<U>() {
+
+			final Iterator<T> parent = source.iterator();
+			Iterator<U> child = null;
+			boolean hasNext = advance();
+			U next;
+			
+			boolean advance() {
+                while (true) {
+                    if (child == null) {
+                        if (!parent.hasNext())
+                            return false;
+                        child = flatter.apply(parent.next()).iterator();
+                    }
+                    if (child.hasNext()) {
+                        next = child.next();
+                        return true;
+                    }
+                    child = null;
+                }
+
+			}
+
+			@Override
+			public boolean hasNext() {
+				return hasNext;
+			}
+
+			@Override
+			public U next() {
+				return prog0(next, x -> hasNext = advance());
+			}
+			
+		};
+	}
+	
 	public static <T> Iterable<T> skip(int skip, Iterable<T> source) {
 		return () -> {
 			Iterator<T> iterator = source.iterator();
@@ -409,7 +446,7 @@ public class Iterables {
 		return (TreeMap<K, V>)map(TreeMap::new, key, value, source);
 	}
 	
-	public static String string(Iterable<Integer> source) {
+	public static String cpstring(Iterable<Integer> source) {
 		StringBuilder sb = new StringBuilder();
 		for (int cp : source)
 			sb.appendCodePoint(cp);
